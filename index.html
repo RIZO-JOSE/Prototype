@@ -176,7 +176,7 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
 <section class="slide" id="slide10" aria-label="Slide 10">
   <header>
     <div><h1>Operation and Demonstration</h1>
-    <p class="sub">Wire the prototype yourself, drop water on the sensor, and watch the servo respond.</p></div>
+    <p class="sub">Wire the prototype yourself, drop water on the sensor, and watch the wiper sweep.</p></div>
     <span class="tag">Slide 10 of 14</span>
   </header>
   <div class="cols">
@@ -216,7 +216,7 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
             <div><b id="sA">–</b><small>ADC (A0)</small></div><div><b id="sV">–</b><small>Voltage</small></div>
             <div><b id="sG">0°</b><small>Servo angle</small></div><div><b id="sP">–</b><small>PWM on D9</small></div>
           </div>
-          <div class="btns"><button id="auto">Auto-wire</button><button id="clr">Clear wires</button><button id="add">Add water</button><button id="dry">Drain</button><button id="ref">Reference diagram</button></div>
+          <div class="btns"><button id="auto">Auto-wire</button><button id="clr">Clear wires</button><button id="add">Add water</button><button id="rem">Remove water</button><button id="dry">Drain all</button><button id="ref">Reference diagram</button></div>
         </aside>
       </div>
     </div>
@@ -226,8 +226,8 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
         <li><span>Click two pins to place a wire. Start with 5V (red) and GND (gray).</span></li>
         <li><span>Click a wire to remove it if you make a mistake. Purple dashed wires join mismatched pins.</span></li>
         <li><span>Pass all four checks: sensor power, sensor signal, servo power, servo signal.</span></li>
-        <li><span>Drag the water drop onto the sensor. The Arduino reads A0 and maps it to an angle.</span></li>
-        <li><span>Watch the servo needle sweep. Drain the water to see it return.</span></li>
+        <li><span>Drag the water drop onto the sensor. The Arduino reads A0 and starts the wiper when it detects water.</span></li>
+        <li><span>Watch the servo wipe back and forth. More water means faster wiping. Remove the water and it parks at 0°.</span></li>
       </ol>
     </div>
     <div class="glass c7">
@@ -235,26 +235,30 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
       <div class="flow">
         <div class="node">💧 Water level<br><small>changes resistance</small></div><div class="arrow"></div>
         <div class="node">Sensor S pin<br><small>analog voltage</small></div><div class="arrow"></div>
-        <div class="node hot">Arduino Uno<br><small>reads A0, maps value</small></div><div class="arrow"></div>
+        <div class="node hot">Arduino Uno<br><small>reads A0, checks level</small></div><div class="arrow"></div>
         <div class="node">D9 PWM<br><small>pulse width</small></div><div class="arrow"></div>
-        <div class="node">Servo<br><small>needle angle</small></div>
+        <div class="node">Servo wiper<br><small>sweeps 0–180°</small></div>
       </div>
     </div>
 
     <div class="glass c6">
       <h2>Arduino program</h2>
 <pre><span class="k">#include</span> &lt;Servo.h&gt;
-Servo gauge;
+Servo wiper;
+<span class="k">const int</span> THRESHOLD = 100;   <span class="cm">// water detected above this</span>
 
 <span class="k">void</span> setup() {
-  gauge.attach(9);          <span class="cm">// servo signal on D9</span>
+  wiper.attach(9);              <span class="cm">// servo signal on D9</span>
 }
 
 <span class="k">void</span> loop() {
-  <span class="k">int</span> level = analogRead(A0);              <span class="cm">// 0–1023</span>
-  <span class="k">int</span> angle = map(level, 0, 1023, 0, 180);  <span class="cm">// to degrees</span>
-  gauge.write(angle);
-  delay(100);
+  <span class="k">int</span> level = analogRead(A0);   <span class="cm">// 0–1023</span>
+  <span class="k">if</span> (level &gt; THRESHOLD) {
+    <span class="k">for</span> (<span class="k">int</span> a = 0; a &lt;= 180; a += 3) { wiper.write(a); delay(10); }
+    <span class="k">for</span> (<span class="k">int</span> a = 180; a &gt;= 0; a -= 3) { wiper.write(a); delay(10); }
+  } <span class="k">else</span> {
+    wiper.write(0);             <span class="cm">// park the wiper</span>
+  }
 }</pre>
     </div>
     <div class="glass c6">
@@ -346,6 +350,10 @@ Servo gauge;
   CK.forEach(function(c){var li=document.createElement('li');li.textContent=c[1];$('checks').appendChild(li);CL[c[0]]=li;});
   function path(a,b){var k=50+Math.hypot(a.x-b.x,a.y-b.y)*.22;
     return 'M'+a.x+' '+a.y+' C'+(a.x+a.dx*k)+' '+(a.y+a.dy*k)+' '+(b.x+(b.dx||0)*k)+' '+(b.y+(b.dy||0)*k)+' '+b.x+' '+b.y;}
+  var wipeOn=false,wipeLevel=0,raf=null,last=0,phase=0,servoOn=false;
+  function setArm(a,smooth){var el=$('arm');el.style.transition=smooth?'':'none';el.style.transform='rotate('+(a-180)+'deg)';}
+  function showAngle(){$('sG').textContent=Math.round(angle)+'\u00b0';$('sP').textContent=servoOn?Math.round(1000+angle/180*1000)+' \u00b5s':'\u2013';}
+  function tick(ts){if(!wipeOn){raf=null;return;}var dt=Math.min(.1,(ts-last)/1000);last=ts;phase+=dt*Math.PI*2/(2.6-wipeLevel*1.6);angle=90-90*Math.cos(phase);setArm(angle,false);showAngle();raf=requestAnimationFrame(tick);}
   function render(){
     var par={};Object.keys(P).forEach(function(k){par[k]=k});
     function f(x){while(par[x]!==x){par[x]=par[par[x]];x=par[x];}return x}
@@ -369,16 +377,16 @@ Servo gauge;
     Object.keys(PE).forEach(function(id){PE[id].classList.toggle('used',!!used[id]);PE[id].classList.toggle('pend',pend===id);});
     CK.forEach(function(c){CL[c[0]].classList.toggle('ok',r[c[0]])});
     var sOn=r.sPow&&r.sSig,vOn=r.vPow&&r.vSig,adc=sOn?Math.round(level*1023):0;
-    if(vOn)angle=adc/1023*180;
+    var wipe=sOn&&vOn&&level>0;servoOn=vOn;if(vOn&&!wipe)angle=0;wipeOn=wipe;wipeLevel=level;
     $('water').style.transform='scaleY('+level+')';
-    $('arm').style.transform='rotate('+(angle-180)+'deg)';
+    if(!wipe)setArm(angle,true);else if(!raf){last=performance.now();phase=0;raf=requestAnimationFrame(tick);}
     $('led').setAttribute('fill',short?'#ef4444':'#22c55e');
     $('sA').textContent=sOn?adc:'–';$('sV').textContent=sOn?(adc*5/1023).toFixed(2)+' V':'–';
-    $('sG').textContent=Math.round(angle)+'°';$('sP').textContent=vOn?Math.round(1000+angle/180*1000)+' \u00b5s':'–';
+    showAngle();
     var st=$('status'),m,c='';
     if(short){m='Short circuit: 5V is connected to GND. Remove a wire.';c='bad';}
-    else if(sOn&&vOn&&level>0){m='Working: the servo follows the water level.';c='ok';}
-    else if(sOn&&vOn){m='Circuit complete. Drag a water drop onto the sensor.';c='ok';}
+    else if(sOn&&vOn&&level>0){m='Wiping: more water makes the wiper sweep faster.';c='ok';}
+    else if(sOn&&vOn){m='Circuit complete. Drag a water drop onto the sensor to start the wiper.';c='ok';}
     else if(!wires.length){m='Click a pin, then click another pin to place a wire. Start with 5V.';}
     else{m='Not working yet. Finish the unchecked items above.';}
     st.textContent=m;st.className='status '+c;
@@ -415,6 +423,7 @@ Servo gauge;
   $('drop').addEventListener('pointerdown',function(e){e.preventDefault();ghost=document.createElement('div');ghost.className='ghost';ghost.textContent='💧';document.body.appendChild(ghost);mv(e);});
   window.addEventListener('pointercancel',function(){if(ghost){ghost.remove();ghost=null;}});
   $('add').onclick=addWater;
+  $('rem').onclick=function(){level=Math.max(0,level-.25);render();};
   $('dry').onclick=function(){level=0;render();};
   $('clr').onclick=function(){wires=[];setPend(null);};
   $('auto').onclick=function(){wires=[];setPend(null);
