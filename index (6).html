@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slides 9 &amp; 10 – Water Level Gauge (Automotive Physics)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05121c;--ink:#eaf6fb;--mute:#9db8c4;--aqua:#5eead4;--amber:#f5a62b;--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.18)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
+/* animated background */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.55;animation:drift 22s ease-in-out infinite alternate}
+.o1{width:46vmax;height:46vmax;background:#1360c9;top:-14vmax;left:-10vmax}
+.o2{width:38vmax;height:38vmax;background:#0f9c8e;bottom:-14vmax;right:-8vmax;animation-duration:27s}
+.o3{width:22vmax;height:22vmax;background:#c9791a;top:40%;left:55%;opacity:.3;animation-duration:31s}
+@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.18)}}
+.grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 40%,#000,transparent 75%)}
+/* slides */
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;padding:clamp(16px,3vw,40px) clamp(16px,4vw,56px) 84px;overflow-y:auto;opacity:0;visibility:hidden;transform:translateX(60px) scale(.98);transition:opacity .6s,transform .6s,visibility .6s}
+.slide.on{opacity:1;visibility:visible;transform:none}
+.slide.past{transform:translateX(-60px) scale(.98)}
+h1{font-family:Outfit,sans-serif;font-weight:700;font-size:clamp(28px,4.2vw,54px);letter-spacing:-.02em;line-height:1.05}
+h2{font-family:Outfit,sans-serif;font-weight:600;font-size:clamp(17px,1.7vw,22px);margin-bottom:10px}
+.sub{color:var(--mute);margin-top:8px;max-width:62ch}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 14px;border-radius:99px;background:var(--glass);border:1px solid var(--edge);color:var(--aqua)}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:22px;padding:20px;backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);box-shadow:0 10px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25);position:relative;overflow:hidden}
+.glass::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.1),transparent);transform:skewX(-20deg);transition:left .9s}
+.glass:hover::before{left:130%}
+.cols{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+@media(max-width:900px){[class^=c]{grid-column:span 12}}
+p,li{line-height:1.55;font-size:15px;color:#cfe3ea}
+ul{padding-left:18px}li{margin:5px 0}
+.formula{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--amber);background:rgba(0,0,0,.28);padding:8px 12px;border-radius:10px;display:block;margin:10px 0;overflow-x:auto}
+.mini{display:flex;gap:12px;align-items:flex-start}
+.ico{flex:none;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,rgba(94,234,212,.3),rgba(19,96,201,.3));border:1px solid var(--edge)}
+/* simulator */
+.sim{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center}
+@media(max-width:560px){.sim{grid-template-columns:1fr}}
+.tank{height:210px;border-radius:14px;border:2px solid var(--edge);position:relative;overflow:hidden;background:rgba(0,0,0,.25)}
+.water{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,#3dc9ff,#1360c9);transition:height .25s;height:50%}
+.water::before,.water::after{content:"";position:absolute;top:-14px;left:-50%;width:200%;height:28px;border-radius:42%;background:rgba(94,200,255,.55);animation:wave 4s linear infinite}
+.water::after{top:-10px;background:rgba(19,96,201,.5);animation-duration:6s;animation-direction:reverse}
+@keyframes wave{to{transform:translateX(25%)}}
+.probe{position:absolute;top:0;left:50%;width:44px;height:100%;transform:translateX(-50%);background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0 3px,transparent 3px 8px);opacity:.35}
+.gauge{width:100%;max-width:260px;margin:auto;display:block}
+.needle{transform-origin:130px 130px;transition:transform .25s}
+input[type=range]{width:100%;accent-color:var(--aqua);margin:14px 0 6px}
+.readout{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.readout div{background:rgba(0,0,0,.26);border-radius:12px;padding:8px;text-align:center}
+.readout b{display:block;font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--aqua)}
+.readout small{color:var(--mute);font-size:11px}
+/* flow */
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+.node{padding:10px 14px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--edge);font-size:13px;text-align:center}
+.node.hot{border-color:var(--amber);animation:pulse 2.4s infinite}
+.arrow{height:3px;width:34px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--aqua),transparent);background-size:200% 100%;animation:run 1.2s linear infinite}
+@keyframes run{to{background-position:-200% 0}}
+@keyframes pulse{50%{box-shadow:0 0 22px rgba(245,166,43,.5)}}
+/* steps */
+.steps{list-style:none;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;padding:8px 0}
+.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#04222a;background:var(--aqua)}
+pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;color:#d6f4ef;background:rgba(0,0,0,.35);padding:14px;border-radius:12px;overflow-x:auto}
+.k{color:var(--amber)}.cm{color:#7f9aa6}
+.shot{width:100%;border-radius:14px;display:block;cursor:zoom-in;border:1px solid var(--edge)}
+.video{aspect-ratio:16/9;border-radius:14px;background:rgba(0,0,0,.35);display:grid;place-items:center;text-align:center;color:var(--mute);font-size:14px;overflow:hidden}
+.video video{width:100%;height:100%;object-fit:cover}
+.warn{border-color:rgba(245,166,43,.5)}
+/* simulator */
+.simgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}
+@media(max-width:900px){.simgrid{grid-template-columns:1fr}}
+#board{width:100%;height:auto;display:block;background:rgba(0,0,0,.25);border-radius:16px;user-select:none;-webkit-user-select:none}
+.lbl{fill:#eaf6fb;font:600 14px Outfit,sans-serif}.big{fill:#fff;font:700 20px Outfit,sans-serif}.pl{fill:#fff;font:600 12px 'DM Sans',sans-serif;pointer-events:none}.sm{fill:#6b6455;font:12px 'DM Sans',sans-serif}
+.pin{cursor:crosshair;touch-action:none}.pin .ring{fill:rgba(255,255,255,0);stroke:none}.pin .dot{stroke:#fff;stroke-width:2;transition:r .15s}
+.pin:hover .dot{r:11}.pin.used .ring{stroke:rgba(255,255,255,.35)}.pin.pend .ring{stroke:#5eead4;stroke-width:3;animation:ping 1s infinite}
+@keyframes ping{50%{r:22;opacity:.4}}
+.wire{cursor:pointer}.wire .hit{fill:none;stroke:transparent;stroke-width:18}.wire .ln{fill:none;stroke-width:5;stroke-linecap:round;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}.wire:hover .ln{stroke-width:8;opacity:.75}
+.wire.mix .ln{stroke-dasharray:.04 .03}.wire.new .ln{stroke-dasharray:1;animation:draw .5s ease-out}
+.wire .flow{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-dasharray:.015 .07;opacity:0;pointer-events:none}.wire.live .flow{opacity:.85;animation:flow 1.1s linear infinite}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}@keyframes flow{to{stroke-dashoffset:-.085}}
+#gw{fill:none;stroke:#5eead4;stroke-width:3;stroke-dasharray:7 6;pointer-events:none}
+#water{fill:rgba(61,201,255,.72);transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .8s cubic-bezier(.3,1.4,.5,1)}
+#sensorBody{transition:filter .2s}#sensorBody.hot{filter:drop-shadow(0 0 14px #5eead4)}
+#arm{transition:transform .9s cubic-bezier(.3,1.3,.5,1)}
+.side{display:flex;flex-direction:column;gap:12px}
+.dropwrap{display:flex;gap:12px;align-items:center}
+.drop{flex:none;width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:34px;cursor:grab;touch-action:none;background:linear-gradient(135deg,rgba(94,234,212,.3),rgba(19,96,201,.4));border:1px solid var(--edge);animation:bob 2.4s ease-in-out infinite;user-select:none}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.ghost{position:fixed;z-index:20;font-size:44px;pointer-events:none;transform:translate(-50%,-60%);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.checks{list-style:none;padding:0}.checks li{display:flex;gap:10px;font-size:14px;padding:4px 0;color:var(--mute)}.checks li::before{content:"○"}.checks li.ok{color:var(--ink)}.checks li.ok::before{content:"✓";color:var(--aqua);font-weight:700}
+.status{padding:10px 12px;border-radius:12px;font-size:14px;background:rgba(255,255,255,.08);line-height:1.4}.status.ok{background:rgba(94,234,212,.18)}.status.bad{background:rgba(239,68,68,.25)}
+.side .readout{grid-template-columns:1fr 1fr}
+.btns{display:flex;flex-wrap:wrap;gap:8px}.btns button{font:600 13px 'DM Sans',sans-serif;color:var(--ink);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:99px;padding:7px 13px;cursor:pointer}.btns button:hover{background:rgba(94,234,212,.25)}
+/* nav */
+nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:8px 14px;z-index:5}
+nav button{font:600 14px 'DM Sans';color:var(--ink);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:99px;padding:8px 16px;cursor:pointer;transition:background .2s}
+nav button:hover{background:rgba(94,234,212,.25)}
+button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.3);border:0;padding:0;transition:width .3s,background .3s}
+.dot.on{width:28px;background:var(--aqua)}
+.lb{position:fixed;inset:0;background:rgba(2,8,14,.88);backdrop-filter:blur(10px);display:none;place-items:center;z-index:9;padding:20px;cursor:zoom-out}
+.lb.on{display:grid}.lb img{max-width:100%;max-height:100%;border-radius:12px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid"></div>
+
+<main class="deck">
+<!-- ================= SLIDE 9 ================= -->
+<section class="slide on" id="slide9" aria-label="Slide 9">
+  <header>
+    <div><h1>Physics Principles Applied</h1>
+    <p class="sub">Water level sensor + Arduino Uno + servo gauge: how electricity and motion turn a water level into a needle position.</p></div>
+    <span class="tag">Slide 9 of 14</span>
+  </header>
+  <div class="cols">
+    <div class="glass c4">
+      <div class="mini"><div class="ico">⚡</div><div><h2>Electricity: Ohm’s law</h2></div></div>
+      <p>Water bridges the exposed copper traces on the sensor. More submerged traces means lower resistance, more current, and a higher voltage on the signal pin (S).</p>
+      <code class="formula">V = I × R &nbsp;&nbsp; P = V × I</code>
+      <p>The sensor is powered from the Arduino’s 5 V rail and shares its ground.</p>
+    </div>
+    <div class="glass c4">
+      <div class="mini"><div class="ico">📈</div><div><h2>Signal conversion (ADC)</h2></div></div>
+      <p>Pin A0 measures the voltage and converts it to a 10-bit number from 0 to 1023.</p>
+      <code class="formula">V = ADC × 5 / 1023<br>resolution = 5 V / 1024 ≈ 4.88 mV</code>
+      <p>The program maps this number linearly to a needle angle.</p>
+    </div>
+    <div class="glass c4">
+      <div class="mini"><div class="ico">⚙️</div><div><h2>Motion and torque</h2></div></div>
+      <p>The servo reads a 50 Hz PWM signal on D9. The pulse width sets the shaft angle, and the motor torque turns the needle against friction.</p>
+      <code class="formula">pulse = 1000 + (θ / 180) × 1000 µs<br>τ = F × r</code>
+    </div>
+
+    <div class="glass c7">
+      <h2>Try it: raise and lower the water level</h2>
+      <div class="sim">
+        <div class="tank" aria-hidden="true"><div class="probe"></div><div class="water" id="water"></div></div>
+        <div>
+          <svg class="gauge" viewBox="0 0 260 150" role="img" aria-label="Servo gauge needle">
+            <path d="M20 130 A110 110 0 0 1 240 130" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="14" stroke-linecap="round"/>
+            <path id="arc" d="M20 130 A110 110 0 0 1 240 130" fill="none" stroke="#5eead4" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="50 100"/>
+            <g class="needle" id="needle"><line x1="130" y1="130" x2="130" y2="40" stroke="#f5a62b" stroke-width="5" stroke-linecap="round"/></g>
+            <circle cx="130" cy="130" r="9" fill="#f5a62b"/>
+            <text x="20" y="148" fill="#9db8c4" font-size="11">0°</text><text x="226" y="148" fill="#9db8c4" font-size="11">180°</text>
+          </svg>
+          <input type="range" id="adc" min="0" max="1023" value="512" aria-label="Simulated ADC reading">
+        </div>
+      </div>
+      <div class="readout">
+        <div><b id="vADC">512</b><small>ADC (0–1023)</small></div>
+        <div><b id="vV">2.50 V</b><small>Voltage at A0</small></div>
+        <div><b id="vA">90°</b><small>Servo angle</small></div>
+        <div><b id="vP">1500 µs</b><small>PWM pulse</small></div>
+      </div>
+    </div>
+
+    <div class="glass c5">
+      <h2>Sample calculation</h2>
+      <p>If the sensor reads <b>ADC = 512</b> (about half-submerged):</p>
+      <code class="formula">V = 512 × 5 / 1023 = 2.50 V<br>θ = 512 / 1023 × 180° = 90.1°<br>pulse = 1000 + (90.1/180) × 1000 ≈ 1500 µs</code>
+      <h2 style="margin-top:14px">Connection to the prototype</h2>
+      <p>Water level changes resistance, resistance changes voltage, voltage becomes a number, and the number becomes servo motion. This is the same chain used by coolant and fuel level gauges in vehicles.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 10 ================= -->
+<section class="slide" id="slide10" aria-label="Slide 10">
+  <header>
+    <div><h1>Operation and Demonstration</h1>
+    <p class="sub">Wire the prototype yourself, drop water on the sensor, and watch the servo respond.</p></div>
+    <span class="tag">Slide 10 of 14</span>
+  </header>
+  <div class="cols">
+    <div class="glass c12">
+      <h2>Build the circuit: click two pins to add a wire, click a wire to remove it</h2>
+      <div class="simgrid">
+        <svg id="board" viewBox="0 0 820 540" role="group" aria-label="Interactive wiring board">
+          <defs><linearGradient id="pcb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d7ab8"/><stop offset="1" stop-color="#135078"/></linearGradient></defs>
+          <text class="lbl" x="415" y="18" text-anchor="middle">Water level sensor</text>
+          <rect id="sensorBody" x="330" y="26" width="170" height="148" rx="12" fill="#c62828"/>
+          <g id="traces" fill="#f3e9e9"></g>
+          <rect id="water" x="346" y="40" width="138" height="90" rx="3"/>
+          <rect x="345" y="172" width="140" height="14" fill="#262626" rx="2"/>
+          <rect x="40" y="210" width="150" height="100" rx="10" fill="#2d2d2d" stroke="#666"/>
+          <text class="big" x="58" y="268">SERVO</text>
+          <text class="lbl" x="115" y="334" text-anchor="middle">Servo motor</text>
+          <path d="M45 210 A70 70 0 0 1 185 210" fill="none" stroke="rgba(255,255,255,.22)" stroke-dasharray="3 5"/>
+          <text class="sm" x="36" y="202" style="fill:#9db8c4">0°</text><text class="sm" x="168" y="202" style="fill:#9db8c4">180°</text>
+          <g transform="translate(115 210)"><g id="arm" style="transform:rotate(-180deg)"><line x1="0" y1="0" x2="58" y2="0" stroke="#f5a62b" stroke-width="9" stroke-linecap="round"/><circle r="9" fill="#eee"/></g></g>
+          <text class="lbl" x="695" y="40" text-anchor="middle">Mini breadboard</text>
+          <rect x="600" y="52" width="190" height="196" rx="12" fill="#efeae0"/>
+          <rect x="676" y="92" width="38" height="132" rx="10" fill="rgba(239,68,68,.15)" stroke="#ef4444" stroke-dasharray="4 4"/>
+          <g id="bbdots" fill="#bdb6a6"></g>
+          <text class="sm" x="695" y="240" text-anchor="middle">connected column</text>
+          <rect x="230" y="370" width="400" height="130" rx="14" fill="url(#pcb)"/>
+          <rect x="268" y="362" width="296" height="14" fill="#222"/><rect x="380" y="494" width="120" height="12" fill="#222"/>
+          <rect x="330" y="410" width="140" height="26" rx="3" fill="#222"/>
+          <text class="big" x="430" y="470" text-anchor="middle">ARDUINO UNO</text>
+          <circle id="led" cx="598" cy="396" r="5" fill="#22c55e"/>
+          <g id="wires"></g><path id="gw" d=""/><g id="pins"></g>
+        </svg>
+        <aside class="side">
+          <div class="dropwrap"><div class="drop" id="drop" title="Drag onto the sensor">💧</div><p style="font-size:14px">Drag the water drop onto the sensor. Each drop raises the level.</p></div>
+          <ul class="checks" id="checks"></ul>
+          <div class="status" id="status" aria-live="polite"></div>
+          <div class="readout">
+            <div><b id="sA">–</b><small>ADC (A0)</small></div><div><b id="sV">–</b><small>Voltage</small></div>
+            <div><b id="sG">0°</b><small>Servo angle</small></div><div><b id="sP">–</b><small>PWM on D9</small></div>
+          </div>
+          <div class="btns"><button id="auto">Auto-wire</button><button id="clr">Clear wires</button><button id="add">Add water</button><button id="dry">Drain</button><button id="ref">Reference diagram</button></div>
+        </aside>
+      </div>
+    </div>
+    <div class="glass c5">
+      <h2>Step-by-step operation</h2>
+      <ol class="steps">
+        <li><span>Click two pins to place a wire. Start with 5V (red) and GND (gray).</span></li>
+        <li><span>Click a wire to remove it if you make a mistake. Purple dashed wires join mismatched pins.</span></li>
+        <li><span>Pass all four checks: sensor power, sensor signal, servo power, servo signal.</span></li>
+        <li><span>Drag the water drop onto the sensor. The Arduino reads A0 and maps it to an angle.</span></li>
+        <li><span>Watch the servo needle sweep. Drain the water to see it return.</span></li>
+      </ol>
+    </div>
+    <div class="glass c7">
+      <h2>How the components work together</h2>
+      <div class="flow">
+        <div class="node">💧 Water level<br><small>changes resistance</small></div><div class="arrow"></div>
+        <div class="node">Sensor S pin<br><small>analog voltage</small></div><div class="arrow"></div>
+        <div class="node hot">Arduino Uno<br><small>reads A0, maps value</small></div><div class="arrow"></div>
+        <div class="node">D9 PWM<br><small>pulse width</small></div><div class="arrow"></div>
+        <div class="node">Servo<br><small>needle angle</small></div>
+      </div>
+    </div>
+
+    <div class="glass c6">
+      <h2>Arduino program</h2>
+<pre><span class="k">#include</span> &lt;Servo.h&gt;
+Servo gauge;
+
+<span class="k">void</span> setup() {
+  gauge.attach(9);          <span class="cm">// servo signal on D9</span>
+}
+
+<span class="k">void</span> loop() {
+  <span class="k">int</span> level = analogRead(A0);              <span class="cm">// 0–1023</span>
+  <span class="k">int</span> angle = map(level, 0, 1023, 0, 180);  <span class="cm">// to degrees</span>
+  gauge.write(angle);
+  delay(100);
+}</pre>
+    </div>
+    <div class="glass c6">
+      <h2>Demonstration video</h2>
+      <div class="video" id="vid"><video controls preload="metadata" src="demo.mp4" onerror="this.parentNode.innerHTML='Add your demo video as demo.mp4<br>in the same folder as index.html'"></video></div>
+    </div>
+
+    <div class="glass warn c12">
+      <h2>Safety precautions</h2>
+      <ul style="columns:2;column-gap:36px">
+        <li>Disconnect USB power before changing any wiring.</li>
+        <li>Keep the Arduino and breadboard dry. Only the sensor’s traces go in the water.</li>
+        <li>Check that 5 V and GND are never connected together.</li>
+        <li>Keep fingers and loose wires away from the moving servo arm.</li>
+        <li>Remove the sensor from water and dry it after use, since wet traces corrode.</li>
+        <li>For vehicle fluids (coolant, fuel), test only with plain water in the classroom.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav class="glass" aria-label="Slide navigation">
+  <button id="prev" aria-label="Previous slide">‹ Prev</button>
+  <div class="dots"><button class="dot on" aria-label="Go to slide 9"></button><button class="dot" aria-label="Go to slide 10"></button></div>
+  <button id="next" aria-label="Next slide">Next ›</button>
+</nav>
+<div class="lb" id="lb"><img src="prototype.png" alt="Wiring diagram enlarged"></div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),dots=[].slice.call(document.querySelectorAll('.dot')),cur=0;
+  function go(n){
+    cur=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,i){s.classList.toggle('on',i===cur);s.classList.toggle('past',i<cur);});
+    dots.forEach(function(d,i){d.classList.toggle('on',i===cur);});
+    try{history.replaceState(null,'','#slide'+(cur+9));}catch(e){}
+  }
+  document.getElementById('prev').onclick=function(){go(cur-1)};
+  document.getElementById('next').onclick=function(){go(cur+1)};
+  dots.forEach(function(d,i){d.onclick=function(){go(i)}});
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+    if(e.key==='Escape')lb.classList.remove('on');
+  });
+  if(location.hash==='#slide10')go(1);
+
+  /* simulator */
+  var r=document.getElementById('adc'),touched=false;
+  function upd(){
+    var v=+r.value,ang=v/1023*180;
+    document.getElementById('water').style.height=(v/1023*92+4)+'%';
+    document.getElementById('needle').style.transform='rotate('+(ang-90)+'deg)';
+    document.getElementById('arc').setAttribute('stroke-dasharray',(v/1023*100)+' 100');
+    document.getElementById('vADC').textContent=v;
+    document.getElementById('vV').textContent=(v*5/1023).toFixed(2)+' V';
+    document.getElementById('vA').textContent=Math.round(ang)+'°';
+    document.getElementById('vP').textContent=Math.round(1000+ang/180*1000)+' µs';
+  }
+  r.addEventListener('input',function(){touched=true;upd();});
+  upd();
+  var t=0;
+  var demo=setInterval(function(){
+    if(touched){clearInterval(demo);return;}
+    t+=.03;r.value=Math.round(511.5+420*Math.sin(t));upd();
+  },60);
+
+  /* wiring simulator */
+  var $=function(i){return document.getElementById(i)},svg=$('board'),NS='http://www.w3.org/2000/svg';
+  function E(n,a,par){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(par)par.appendChild(e);return e;}
+  var COL={'5v':'#ef4444',gnd:'#b5b5b5',a0:'#22c1a0',d9:'#f28c28',mix:'#e879f9'};
+  var defs=[['sS',360,192,'a0',0,1,'S',0,-24],['sP',415,192,'5v',0,1,'+',0,-24],['sM',470,192,'gnd',0,1,'\u2212',0,-24],
+  ['vV',190,238,'5v',1,0,'5V',-16,4,'end'],['vG',190,262,'gnd',1,0,'GND',-16,4,'end'],['vS',190,286,'d9',1,0,'SIG',-16,4,'end'],
+  ['b1',695,110,'5v',-1,0],['b2',695,140,'5v',-1,0],['b3',695,170,'5v',-1,0],['b4',695,200,'5v',-1,0],
+  ['A0',290,370,'a0',0,-1,'A0',0,26],['G1',455,370,'gnd',0,-1,'GND',0,26],['G2',490,370,'gnd',0,-1,'GND',0,26],['V5',525,370,'5v',0,-1,'5V',0,26],['D9',420,500,'d9',0,1,'D9',0,-12]];
+  var P={},PE={},wires=[],level=0,angle=0,pend=null,sp=null,moved=false;
+  for(var i=0;i<9;i++)E('rect',{x:352+i*15,y:40,width:8,height:90,rx:2},$('traces'));
+  [630,660,725,755].forEach(function(x){for(var y=110;y<=200;y+=30)E('circle',{cx:x,cy:y,r:4},$('bbdots'));});
+  defs.forEach(function(d){
+    var g=E('g',{'class':'pin','data-id':d[0]},$('pins'));
+    E('circle',{'class':'ring',cx:d[1],cy:d[2],r:16},g);
+    E('circle',{'class':'dot',cx:d[1],cy:d[2],r:8,fill:/^b\d$/.test(d[0])?'#222':COL[d[3]]},g);
+    if(d[6]){var t=E('text',{'class':'pl',x:d[1]+d[7],y:d[2]+d[8],'text-anchor':d[9]||'middle'},g);t.textContent=d[6];}
+    P[d[0]]={x:d[1],y:d[2],k:d[3],dx:d[4],dy:d[5]};PE[d[0]]=g;
+  });
+  var CK=[['sPow','Sensor power: + to 5V, \u2212 to GND'],['sSig','Sensor signal: S to A0'],['vPow','Servo power: 5V and GND'],['vSig','Servo signal: SIG to D9']],CL={};
+  CK.forEach(function(c){var li=document.createElement('li');li.textContent=c[1];$('checks').appendChild(li);CL[c[0]]=li;});
+  function path(a,b){var k=50+Math.hypot(a.x-b.x,a.y-b.y)*.22;
+    return 'M'+a.x+' '+a.y+' C'+(a.x+a.dx*k)+' '+(a.y+a.dy*k)+' '+(b.x+(b.dx||0)*k)+' '+(b.y+(b.dy||0)*k)+' '+b.x+' '+b.y;}
+  function render(){
+    var par={};Object.keys(P).forEach(function(k){par[k]=k});
+    function f(x){while(par[x]!==x){par[x]=par[par[x]];x=par[x];}return x}
+    function u(a,b){par[f(a)]=f(b)}
+    u('b1','b2');u('b2','b3');u('b3','b4');u('G1','G2');
+    wires.forEach(function(w){u(w.a,w.b)});
+    var v5=f('V5'),gn=f('G1'),short=v5===gn;
+    var sigOk=function(pin,arduino){var n=f(pin);return n===f(arduino)&&n!==v5&&n!==gn};
+    var r={sPow:f('sP')===v5&&f('sM')===gn,sSig:sigOk('sS','A0'),vPow:f('vV')===v5&&f('vG')===gn,vSig:sigOk('vS','D9')};
+    if(short)for(var k in r)r[k]=false;
+    var live={};live[v5]=live[gn]=live[f('A0')]=live[f('D9')]=1;
+    var W=$('wires');W.innerHTML='';
+    wires.forEach(function(w,i){
+      var a=P[w.a],b=P[w.b],same=a.k===b.k,d=path(a,b);
+      var g=E('g',{'class':'wire'+(same?'':' mix')+(w.fresh?' new':'')+(!short&&live[f(w.a)]?' live':'')},W);
+      E('path',{'class':'hit',d:d},g);E('path',{'class':'ln',d:d,stroke:same?COL[a.k]:COL.mix,pathLength:1},g);E('path',{'class':'flow',d:d,pathLength:1},g);
+      E('title',{},g).textContent='Click to remove this wire';
+      g.addEventListener('click',function(){wires.splice(i,1);render();});
+    });
+    var used={};wires.forEach(function(w){used[w.a]=used[w.b]=1});
+    Object.keys(PE).forEach(function(id){PE[id].classList.toggle('used',!!used[id]);PE[id].classList.toggle('pend',pend===id);});
+    CK.forEach(function(c){CL[c[0]].classList.toggle('ok',r[c[0]])});
+    var sOn=r.sPow&&r.sSig,vOn=r.vPow&&r.vSig,adc=sOn?Math.round(level*1023):0;
+    if(vOn)angle=adc/1023*180;
+    $('water').style.transform='scaleY('+level+')';
+    $('arm').style.transform='rotate('+(angle-180)+'deg)';
+    $('led').setAttribute('fill',short?'#ef4444':'#22c55e');
+    $('sA').textContent=sOn?adc:'–';$('sV').textContent=sOn?(adc*5/1023).toFixed(2)+' V':'–';
+    $('sG').textContent=Math.round(angle)+'°';$('sP').textContent=vOn?Math.round(1000+angle/180*1000)+' \u00b5s':'–';
+    var st=$('status'),m,c='';
+    if(short){m='Short circuit: 5V is connected to GND. Remove a wire.';c='bad';}
+    else if(sOn&&vOn&&level>0){m='Working: the servo follows the water level.';c='ok';}
+    else if(sOn&&vOn){m='Circuit complete. Drag a water drop onto the sensor.';c='ok';}
+    else if(!wires.length){m='Click a pin, then click another pin to place a wire. Start with 5V.';}
+    else{m='Not working yet. Finish the unchecked items above.';}
+    st.textContent=m;st.className='status '+c;
+  }
+  function addWire(a,b){
+    if(a===b||wires.some(function(w){return(w.a===a&&w.b===b)||(w.a===b&&w.b===a)}))return;
+    var w={a:a,b:b,fresh:true};wires.push(w);setTimeout(function(){w.fresh=false},600);render();
+  }
+  function setPend(id){pend=id;if(!id)$('gw').setAttribute('d','');render();}
+  function pt(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+  svg.addEventListener('pointerdown',function(e){
+    var el=e.target.closest('.pin');if(!el)return;e.preventDefault();var id=el.getAttribute('data-id');
+    if(pend&&pend!==id){addWire(pend,id);setPend(null);return;}
+    sp={x:e.clientX,y:e.clientY};moved=false;setPend(id);
+  });
+  svg.addEventListener('click',function(e){if(!e.target.closest('.pin,.wire'))setPend(null);});
+  window.addEventListener('pointermove',function(e){
+    if(pend){var q=pt(e);$('gw').setAttribute('d',path(P[pend],{x:q.x,y:q.y}));if(sp&&Math.hypot(e.clientX-sp.x,e.clientY-sp.y)>8)moved=true;}
+    if(ghost)mv(e);
+  });
+  window.addEventListener('pointerup',function(e){
+    if(pend&&sp){var el=document.elementFromPoint(e.clientX,e.clientY),pin=el&&el.closest?el.closest('.pin'):null;
+      if(pin&&pin.getAttribute('data-id')!==pend){addWire(pend,pin.getAttribute('data-id'));setPend(null);}
+      else if(moved&&!pin)setPend(null);
+      sp=null;}
+    if(ghost){if(over(e))addWater();ghost.remove();ghost=null;$('sensorBody').classList.remove('hot');}
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setPend(null);});
+  /* water drop */
+  var ghost=null;
+  function over(e){var r=$('sensorBody').getBoundingClientRect();return e.clientX>r.left-14&&e.clientX<r.right+14&&e.clientY>r.top-14&&e.clientY<r.bottom+14;}
+  function mv(e){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';$('sensorBody').classList.toggle('hot',over(e));}
+  function addWater(){level=Math.min(1,level+.25);render();}
+  $('drop').addEventListener('pointerdown',function(e){e.preventDefault();ghost=document.createElement('div');ghost.className='ghost';ghost.textContent='💧';document.body.appendChild(ghost);mv(e);});
+  window.addEventListener('pointercancel',function(){if(ghost){ghost.remove();ghost=null;}});
+  $('add').onclick=addWater;
+  $('dry').onclick=function(){level=0;render();};
+  $('clr').onclick=function(){wires=[];setPend(null);};
+  $('auto').onclick=function(){wires=[];setPend(null);
+    [['sS','A0'],['sP','b1'],['V5','b2'],['vV','b3'],['sM','G1'],['vG','G2'],['vS','D9']].forEach(function(p,i){setTimeout(function(){addWire(p[0],p[1])},i*260);});};
+  render();
+
+  /* lightbox */
+  var lb=$('lb');
+  $('ref').onclick=function(){lb.classList.add('on')};
+  lb.onclick=function(){lb.classList.remove('on')};
+})();
+</script>
+</body>
+</html>
