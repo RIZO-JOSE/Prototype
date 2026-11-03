@@ -11,14 +11,12 @@
 :root{--bg:#05121c;--ink:#eaf6fb;--mute:#9db8c4;--aqua:#5eead4;--amber:#f5a62b;--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.18)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
-/* animated background */
 .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.55;animation:drift 22s ease-in-out infinite alternate}
 .o1{width:46vmax;height:46vmax;background:#1360c9;top:-14vmax;left:-10vmax}
 .o2{width:38vmax;height:38vmax;background:#0f9c8e;bottom:-14vmax;right:-8vmax;animation-duration:27s}
 .o3{width:22vmax;height:22vmax;background:#c9791a;top:40%;left:55%;opacity:.3;animation-duration:31s}
 @keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.18)}}
 .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 40%,#000,transparent 75%)}
-/* slides */
 .deck{position:fixed;inset:0}
 .slide{position:absolute;inset:0;padding:clamp(16px,3vw,40px) clamp(16px,4vw,56px) 84px;overflow-y:auto;opacity:0;visibility:hidden;transform:translateX(60px) scale(.98);transition:opacity .6s,transform .6s,visibility .6s}
 .slide.on{opacity:1;visibility:visible;transform:none}
@@ -39,42 +37,19 @@ ul{padding-left:18px}li{margin:5px 0}
 .formula{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--amber);background:rgba(0,0,0,.28);padding:8px 12px;border-radius:10px;display:block;margin:10px 0;overflow-x:auto}
 .mini{display:flex;gap:12px;align-items:flex-start}
 .ico{flex:none;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,rgba(94,234,212,.3),rgba(19,96,201,.3));border:1px solid var(--edge)}
-/* simulator */
-.sim{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center}
-@media(max-width:560px){.sim{grid-template-columns:1fr}}
-.tank{height:210px;border-radius:14px;border:2px solid var(--edge);position:relative;overflow:hidden;background:rgba(0,0,0,.25)}
-.water{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,#3dc9ff,#1360c9);transition:height .25s;height:50%}
-.water::before,.water::after{content:"";position:absolute;top:-14px;left:-50%;width:200%;height:28px;border-radius:42%;background:rgba(94,200,255,.55);animation:wave 4s linear infinite}
-.water::after{top:-10px;background:rgba(19,96,201,.5);animation-duration:6s;animation-direction:reverse}
-@keyframes wave{to{transform:translateX(25%)}}
-.probe{position:absolute;top:0;left:50%;width:44px;height:100%;transform:translateX(-50%);background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0 3px,transparent 3px 8px);opacity:.35}
-.gauge{width:100%;max-width:260px;margin:auto;display:block}
-.needle{transform-origin:130px 130px;transition:transform .25s}
-input[type=range]{width:100%;accent-color:var(--aqua);margin:14px 0 6px}
-.readout{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
-.readout div{background:rgba(0,0,0,.26);border-radius:12px;padding:8px;text-align:center}
-.readout b{display:block;font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--aqua)}
-.readout small{color:var(--mute);font-size:11px}
-/* flow */
 .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
 .node{padding:10px 14px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--edge);font-size:13px;text-align:center}
 .node.hot{border-color:var(--amber);animation:pulse 2.4s infinite}
 .arrow{height:3px;width:34px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--aqua),transparent);background-size:200% 100%;animation:run 1.2s linear infinite}
 @keyframes run{to{background-position:-200% 0}}
 @keyframes pulse{50%{box-shadow:0 0 22px rgba(245,166,43,.5)}}
-/* steps */
-.steps{list-style:none;padding:0;counter-reset:s}
-.steps li{counter-increment:s;display:flex;gap:12px;padding:8px 0}
-.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#04222a;background:var(--aqua)}
 pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;color:#d6f4ef;background:rgba(0,0,0,.35);padding:14px;border-radius:12px;overflow-x:auto}
 .k{color:var(--amber)}.cm{color:#7f9aa6}
-.shot{width:100%;border-radius:14px;display:block;cursor:zoom-in;border:1px solid var(--edge)}
-.video{aspect-ratio:16/9;border-radius:14px;background:rgba(0,0,0,.35);display:grid;place-items:center;text-align:center;color:var(--mute);font-size:14px;overflow:hidden}
-.video video{width:100%;height:100%;object-fit:cover}
-.warn{border-color:rgba(245,166,43,.5)}
-/* simulator */
+.note{border-color:rgba(94,234,212,.45)}
 .simgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}
 @media(max-width:900px){.simgrid{grid-template-columns:1fr}}
+@keyframes blink{50%{opacity:.35}}.wire.bad .ln{animation:blink .8s infinite;filter:drop-shadow(0 0 6px #ef4444)}
+.bw{position:relative;min-width:0}#toast{position:absolute;left:50%;top:12px;transform:translate(-50%,-16px);opacity:0;pointer-events:none;background:rgba(220,38,38,.96);color:#fff;font:600 14px 'DM Sans',sans-serif;padding:10px 16px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.5);transition:opacity .3s,transform .3s;max-width:92%;text-align:center;line-height:1.4;z-index:3}#toast.on{opacity:1;transform:translate(-50%,0)}
 #board{width:100%;height:auto;display:block;background:rgba(0,0,0,.25);border-radius:16px;user-select:none;-webkit-user-select:none}
 .lbl{fill:#eaf6fb;font:600 14px Outfit,sans-serif}.big{fill:#fff;font:700 20px Outfit,sans-serif}.pl{fill:#fff;font:600 12px 'DM Sans',sans-serif;pointer-events:none}.sm{fill:#6b6455;font:12px 'DM Sans',sans-serif}
 .pin{cursor:crosshair;touch-action:none}.pin .ring{fill:rgba(255,255,255,0);stroke:none}.pin .dot{stroke:#fff;stroke-width:2;transition:r .15s}
@@ -95,13 +70,31 @@ pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;colo
 .ghost{position:fixed;z-index:20;font-size:44px;pointer-events:none;transform:translate(-50%,-60%);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
 .checks{list-style:none;padding:0}.checks li{display:flex;gap:10px;font-size:14px;padding:4px 0;color:var(--mute)}.checks li::before{content:"○"}.checks li.ok{color:var(--ink)}.checks li.ok::before{content:"✓";color:var(--aqua);font-weight:700}
 .status{padding:10px 12px;border-radius:12px;font-size:14px;background:rgba(255,255,255,.08);line-height:1.4}.status.ok{background:rgba(94,234,212,.18)}.status.bad{background:rgba(239,68,68,.25)}
+.readout{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.readout div{background:rgba(0,0,0,.26);border-radius:12px;padding:8px;text-align:center}
+.readout b{display:block;font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--aqua)}
+.readout small{color:var(--mute);font-size:11px}
 .side .readout{grid-template-columns:1fr 1fr}
 .btns{display:flex;flex-wrap:wrap;gap:8px}.btns button{font:600 13px 'DM Sans',sans-serif;color:var(--ink);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:99px;padding:7px 13px;cursor:pointer}.btns button:hover{background:rgba(94,234,212,.25)}
-/* nav */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px}
+.comp{background:rgba(0,0,0,.2);border:1px solid var(--edge);border-radius:18px;padding:14px;transition:transform .3s,border-color .3s}
+.comp:hover{transform:translateY(-6px);border-color:var(--aqua)}
+.comp .art{background:rgba(0,0,0,.28);border-radius:12px;padding:8px;margin-bottom:10px}
+.comp svg{width:100%;height:150px;display:block}
+.comp h3{font:600 17px Outfit,sans-serif;margin-bottom:4px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.sc{background:rgba(0,0,0,.2);border:1px solid var(--edge);border-radius:16px;padding:14px;position:relative}
+.sc .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;color:#04222a;background:var(--aqua);margin-bottom:8px;animation:pulse2 3s infinite}
+.sc:nth-child(2) .n{animation-delay:.5s}.sc:nth-child(3) .n{animation-delay:1s}.sc:nth-child(4) .n{animation-delay:1.5s}.sc:nth-child(5) .n{animation-delay:2s}
+@keyframes pulse2{0%,70%,100%{box-shadow:0 0 0 0 rgba(94,234,212,0)}35%{box-shadow:0 0 0 10px rgba(94,234,212,.3)}}
+.sc b{display:block;font:600 16px Outfit,sans-serif;margin-bottom:4px}
+.fn{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.fn div{border-radius:16px;padding:16px;background:rgba(0,0,0,.22);border:1px solid var(--edge);border-left:5px solid var(--c)}
+.fn strong{display:block;font:700 24px Outfit,sans-serif;color:var(--c);margin-bottom:4px}
 nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:8px 14px;z-index:5}
 nav button{font:600 14px 'DM Sans';color:var(--ink);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:99px;padding:8px 16px;cursor:pointer;transition:background .2s}
 nav button:hover{background:rgba(94,234,212,.25)}
-button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.3);border:0;padding:0;transition:width .3s,background .3s}
 .dot.on{width:28px;background:var(--aqua)}
 .lb{position:fixed;inset:0;background:rgba(2,8,14,.88);backdrop-filter:blur(10px);display:none;place-items:center;z-index:9;padding:20px;cursor:zoom-out}
@@ -117,57 +110,34 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
 <section class="slide on" id="slide9" aria-label="Slide 9">
   <header>
     <div><h1>Physics Principles Applied</h1>
-    <p class="sub">Water level sensor + Arduino Uno + servo gauge: how electricity and motion turn a water level into a needle position.</p></div>
+    <p class="sub">The four physics ideas that make the water-sensing prototype work.</p></div>
     <span class="tag">Slide 9 of 14</span>
   </header>
   <div class="cols">
-    <div class="glass c4">
-      <div class="mini"><div class="ico">⚡</div><div><h2>Electricity: Ohm’s law</h2></div></div>
-      <p>Water bridges the exposed copper traces on the sensor. More submerged traces means lower resistance, more current, and a higher voltage on the signal pin (S).</p>
-      <code class="formula">V = I × R &nbsp;&nbsp; P = V × I</code>
-      <p>The sensor is powered from the Arduino’s 5 V rail and shares its ground.</p>
+    <div class="glass c6">
+      <div class="mini"><div class="ico">⚡</div><div><h2>1. Electricity</h2>
+      <ul><li>Provides the electrical energy needed to operate the Arduino, water level sensor, and servo motor. A power bank supplies this energy through the Arduino’s USB port.</li><li>Allows the components to communicate and function together.</li></ul></div></div>
     </div>
-    <div class="glass c4">
-      <div class="mini"><div class="ico">📈</div><div><h2>Signal conversion (ADC)</h2></div></div>
-      <p>Pin A0 measures the voltage and converts it to a 10-bit number from 0 to 1023.</p>
-      <code class="formula">V = ADC × 5 / 1023<br>resolution = 5 V / 1024 ≈ 4.88 mV</code>
-      <p>The program maps this number linearly to a needle angle.</p>
+    <div class="glass c6">
+      <div class="mini"><div class="ico">💧</div><div><h2>2. Sensing and Measurement</h2>
+      <ul><li>The water level sensor detects the presence or level of water.</li><li>It sends an electrical signal to the Arduino for processing.</li></ul></div></div>
     </div>
-    <div class="glass c4">
-      <div class="mini"><div class="ico">⚙️</div><div><h2>Motion and torque</h2></div></div>
-      <p>The servo reads a 50 Hz PWM signal on D9. The pulse width sets the shaft angle, and the motor torque turns the needle against friction.</p>
-      <code class="formula">pulse = 1000 + (θ / 180) × 1000 µs<br>τ = F × r</code>
+    <div class="glass c6">
+      <div class="mini"><div class="ico">🔄</div><div><h2>3. Motion</h2>
+      <ul><li>The servo motor produces rotational movement based on the signal received from the Arduino.</li><li>This movement allows the mechanical part of the prototype to operate.</li></ul></div></div>
     </div>
-
-    <div class="glass c7">
-      <h2>Try it: raise and lower the water level</h2>
-      <div class="sim">
-        <div class="tank" aria-hidden="true"><div class="probe"></div><div class="water" id="water"></div></div>
-        <div>
-          <svg class="gauge" viewBox="0 0 260 150" role="img" aria-label="Servo gauge needle">
-            <path d="M20 130 A110 110 0 0 1 240 130" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="14" stroke-linecap="round"/>
-            <path id="arc" d="M20 130 A110 110 0 0 1 240 130" fill="none" stroke="#5eead4" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="50 100"/>
-            <g class="needle" id="needle"><line x1="130" y1="130" x2="130" y2="40" stroke="#f5a62b" stroke-width="5" stroke-linecap="round"/></g>
-            <circle cx="130" cy="130" r="9" fill="#f5a62b"/>
-            <text x="20" y="148" fill="#9db8c4" font-size="11">0°</text><text x="226" y="148" fill="#9db8c4" font-size="11">180°</text>
-          </svg>
-          <input type="range" id="adc" min="0" max="1023" value="512" aria-label="Simulated ADC reading">
-        </div>
+    <div class="glass c6">
+      <div class="mini"><div class="ico">🔧</div><div><h2>4. Force and Torque</h2>
+      <ul><li>The servo motor generates force and rotational torque to move the connected mechanism.</li><li>This allows the prototype to perform its intended movement.</li></ul></div></div>
+    </div>
+    <div class="glass c12">
+      <div class="flow">
+        <div class="node">🔋 Power bank<br><small>supplies 5V via USB</small></div><div class="arrow"></div>
+        <div class="node">⚡ Electricity<br><small>powers every part</small></div><div class="arrow"></div>
+        <div class="node">💧 Sensing<br><small>water becomes a signal</small></div><div class="arrow"></div>
+        <div class="node hot">🔄 Motion<br><small>servo rotates</small></div><div class="arrow"></div>
+        <div class="node">🔧 Force and torque<br><small>moves the mechanism</small></div>
       </div>
-      <div class="readout">
-        <div><b id="vADC">512</b><small>ADC (0–1023)</small></div>
-        <div><b id="vV">2.50 V</b><small>Voltage at A0</small></div>
-        <div><b id="vA">90°</b><small>Servo angle</small></div>
-        <div><b id="vP">1500 µs</b><small>PWM pulse</small></div>
-      </div>
-    </div>
-
-    <div class="glass c5">
-      <h2>Sample calculation</h2>
-      <p>If the sensor reads <b>ADC = 512</b> (about half-submerged):</p>
-      <code class="formula">V = 512 × 5 / 1023 = 2.50 V<br>θ = 512 / 1023 × 180° = 90.1°<br>pulse = 1000 + (90.1/180) × 1000 ≈ 1500 µs</code>
-      <h2 style="margin-top:14px">Connection to the prototype</h2>
-      <p>Water level changes resistance, resistance changes voltage, voltage becomes a number, and the number becomes servo motion. This is the same chain used by coolant and fuel level gauges in vehicles.</p>
     </div>
   </div>
 </section>
@@ -176,14 +146,132 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
 <section class="slide" id="slide10" aria-label="Slide 10">
   <header>
     <div><h1>Operation and Demonstration</h1>
-    <p class="sub">Wire the prototype yourself, drop water on the sensor, and watch the wiper sweep.</p></div>
+    <p class="sub">How the prototype works, what each part does, the Arduino program, and a live wiring demo you can try.</p></div>
     <span class="tag">Slide 10 of 14</span>
   </header>
   <div class="cols">
     <div class="glass c12">
+      <h2>How the Prototype Works</h2>
+      <div class="sgrid">
+        <div class="sc"><div class="n">1</div><b>Power Supply</b><p>A power bank powers the Arduino. Plug the Arduino’s USB port into the power bank with a USB cable.</p></div>
+        <div class="sc"><div class="n">2</div><b>Water Detection</b><p>The water level sensor detects water and sends a signal to the Arduino.</p></div>
+        <div class="sc"><div class="n">3</div><b>Signal Processing</b><p>The Arduino Uno processes the information based on the programmed instructions.</p></div>
+        <div class="sc"><div class="n">4</div><b>Motor Activation</b><p>The Arduino sends a control signal to the servo motor through digital pin D9.</p></div>
+        <div class="sc"><div class="n">5</div><b>Mechanical Movement</b><p>The servo motor rotates and moves the connected mechanism.</p></div>
+      </div>
+    </div>
+
+    <div class="glass c12">
+      <h2>Main Components and Their Functions</h2>
+      <div class="fgrid">
+        <div class="comp"><div class="art"><svg viewBox="0 0 220 140" role="img" aria-label="Arduino Uno illustration"><rect x="8" y="14" width="196" height="112" rx="10" fill="#1a6b9c"/><rect x="30" y="8" width="110" height="10" fill="#222"/><line x1="34" y1="13" x2="136" y2="13" stroke="#e8b83a" stroke-width="5" stroke-dasharray="5 5"/><rect x="150" y="8" width="44" height="10" fill="#222"/><line x1="154" y1="13" x2="190" y2="13" stroke="#e8b83a" stroke-width="5" stroke-dasharray="5 5"/><rect x="40" y="122" width="120" height="10" fill="#222"/><line x1="44" y1="127" x2="156" y2="127" stroke="#e8b83a" stroke-width="5" stroke-dasharray="5 5"/><rect x="188" y="34" width="30" height="36" fill="#b8b8b8"/><rect x="188" y="82" width="30" height="30" fill="#222"/><rect x="62" y="50" width="76" height="26" rx="2" fill="#222"/><text x="100" y="104" text-anchor="middle" fill="#fff" font-family="Outfit,sans-serif" font-weight="700" font-size="15">ARDUINO UNO</text></svg></div><h3>Arduino Uno</h3><p>Acts as the brain or controller of the prototype. It receives sensor readings, processes the programmed instructions, and controls the servo motor.</p></div>
+        <div class="comp"><div class="art"><svg viewBox="0 0 200 140" role="img" aria-label="Water level sensor illustration"><rect x="40" y="4" width="120" height="102" rx="10" fill="#c62828"/><g fill="#f3e9e9"><rect x="54" y="14" width="6" height="58"/><rect x="67.5" y="14" width="6" height="58"/><rect x="81" y="14" width="6" height="58"/><rect x="94.5" y="14" width="6" height="58"/><rect x="108" y="14" width="6" height="58"/><rect x="121.5" y="14" width="6" height="58"/><rect x="135" y="14" width="6" height="58"/></g><rect x="84" y="78" width="32" height="12" rx="2" fill="#2a2a2a"/><rect x="56" y="106" width="88" height="10" fill="#262626"/><circle cx="70" cy="122" r="5" fill="#22c1a0"/><circle cx="100" cy="122" r="5" fill="#ef4444"/><circle cx="130" cy="122" r="5" fill="#b5b5b5"/><g fill="#eaf6fb" font-family="DM Sans,sans-serif" font-weight="700" font-size="12" text-anchor="middle"><text x="70" y="138">S</text><text x="100" y="138">+</text><text x="130" y="138">−</text></g></svg></div><h3>Water Level Sensor</h3><p>Detects water and sends electrical signals to the Arduino.</p></div>
+        <div class="comp"><div class="art"><svg viewBox="0 0 200 140" role="img" aria-label="Servo motor illustration"><rect x="20" y="36" width="120" height="82" rx="8" fill="#2d2d2d" stroke="#777"/><text x="34" y="84" fill="#fff" font-family="Outfit,sans-serif" font-weight="700" font-size="17">SERVO</text><circle cx="60" cy="30" r="15" fill="#e8e8e8"/><rect x="54" y="4" width="12" height="28" rx="6" fill="#e8e8e8"/><circle cx="146" cy="58" r="5" fill="#ef4444"/><circle cx="146" cy="78" r="5" fill="#b5b5b5"/><circle cx="146" cy="98" r="5" fill="#f28c28"/><g fill="#ddd" font-family="DM Sans,sans-serif" font-size="11"><text x="155" y="62">5V</text><text x="155" y="82">GND</text><text x="155" y="102">SIG</text></g></svg></div><h3>Servo Motor</h3><p>Receives control signals from the Arduino and produces rotational movement.</p></div>
+        <div class="comp"><div class="art"><svg viewBox="0 0 200 140" role="img" aria-label="Power bank illustration"><rect x="52" y="22" width="96" height="104" rx="14" fill="#34465a" stroke="#6b829a" stroke-width="2"/><rect x="64" y="34" width="72" height="22" rx="5" fill="#1d2a38"/><g fill="#22c55e"><rect x="70" y="40" width="12" height="10" rx="2"/><rect x="86" y="40" width="12" height="10" rx="2"/><rect x="102" y="40" width="12" height="10" rx="2"/></g><rect x="118" y="40" width="12" height="10" rx="2" fill="#4b5d70"/><text x="100" y="92" text-anchor="middle" fill="#fff" font-family="Outfit,sans-serif" font-weight="700" font-size="14">POWER BANK</text><rect x="86" y="112" width="28" height="10" rx="2" fill="#b8b8b8"/><path d="M100 122 V134 H176" fill="none" stroke="#f5a62b" stroke-width="5" stroke-linecap="round"/><text x="176" y="128" text-anchor="end" fill="#9db8c4" font-family="DM Sans,sans-serif" font-size="10">USB to Arduino</text></svg></div><h3>Power Bank</h3><p>Supplies 5V power. Connected by USB cable to the Arduino so the prototype runs without a computer.</p></div>
+        <div class="comp"><div class="art"><svg viewBox="0 0 220 160" role="img" aria-label="Mini breadboard illustration"><defs><pattern id="bbd" x="40" y="14" width="12" height="12" patternUnits="userSpaceOnUse"><rect x="3" y="3" width="6" height="6" fill="#77716a"/></pattern></defs><rect x="6" y="6" width="208" height="148" rx="10" fill="#efeae0"/><rect x="40" y="14" width="164" height="60" fill="url(#bbd)"/><rect x="40" y="86" width="164" height="60" fill="url(#bbd)"/><rect x="14" y="76" width="192" height="8" fill="#dcd8d0"/><g fill="#111"><rect x="66" y="16" width="8" height="8"/><rect x="66" y="28" width="8" height="8"/><rect x="66" y="40" width="8" height="8"/></g><g fill="#555" font-family="DM Sans,sans-serif" font-weight="700" font-size="9" text-anchor="middle"><text x="24" y="24">A</text><text x="24" y="36">B</text><text x="24" y="48">C</text><text x="24" y="60">D</text><text x="24" y="72">E</text><text x="24" y="96">F</text><text x="24" y="108">G</text><text x="24" y="120">H</text><text x="24" y="132">I</text><text x="24" y="144">J</text></g></svg></div><h3>Breadboard</h3><p>Joins the 5V line so the sensor and servo share one power source without soldering.</p></div>
+      </div>
+    </div>
+
+    <div class="glass c12">
+      <h2>Remember these three functions</h2>
+      <div class="fn">
+        <div style="--c:#5eead4"><strong>Sensor</strong>Detects water.</div>
+        <div style="--c:#6fb1ff"><strong>Arduino</strong>Processes information and controls the system.</div>
+        <div style="--c:#f5a62b"><strong>Servo Motor</strong>Produces movement.</div>
+      </div>
+    </div>
+
+    <div class="glass c12">
+      <h2>Arduino program</h2>
+<pre><span class="k">#include</span> &lt;Servo.h&gt;
+
+<span class="k">const int</span> SENSOR_PIN = A0;
+<span class="k">const int</span> SERVO_PIN  = 9;
+
+<span class="k">const int</span> WET_THRESHOLD = 100;
+<span class="k">const int</span> DRY_COUNT     = 2;
+
+<span class="k">const int</span> STOP_VAL    = 90;
+<span class="k">const int</span> SPEED       = 40;
+<span class="k">const int</span> WIPE_TIME   = 900;
+<span class="k">const int</span> BACK_TRIM   = 10;
+<span class="k">const int</span> SETTLE_TIME = 50;
+
+Servo wiper;
+<span class="k">bool</span> wiping    = <span class="k">false</span>;
+<span class="k">int</span>  dryChecks = 0;
+
+<span class="k">int</span> readSensor() {
+  <span class="k">long</span> sum = 0;
+  <span class="k">for</span> (<span class="k">int</span> i = 0; i &lt; 8; i++) {
+    sum += analogRead(SENSOR_PIN);
+    delay(2);
+  }
+  <span class="k">return</span> sum / 8;
+}
+
+<span class="k">void</span> wipeOnce() {
+  wiper.write(STOP_VAL + SPEED);
+  delay(WIPE_TIME);
+  wiper.write(STOP_VAL);
+  delay(SETTLE_TIME);
+
+  wiper.write(STOP_VAL - SPEED);
+  delay(WIPE_TIME + BACK_TRIM);
+  wiper.write(STOP_VAL);
+  delay(SETTLE_TIME);
+}
+
+<span class="k">void</span> setup() {
+  Serial.begin(9600);
+  Serial.println(<span class="k">"Started. Watch the readings below."</span>);
+}
+
+<span class="k">void</span> loop() {
+  <span class="k">int</span> v = readSensor();
+  <span class="k">bool</span> wet = (v &gt; WET_THRESHOLD);
+
+  Serial.print(<span class="k">"Reading: "</span>);     Serial.print(v);
+  Serial.print(<span class="k">"  Threshold: "</span>); Serial.print(WET_THRESHOLD);
+  Serial.print(<span class="k">"  Wet: "</span>);       Serial.print(wet ? <span class="k">"YES"</span> : <span class="k">"NO"</span>);
+  Serial.print(<span class="k">"  Wiping: "</span>);    Serial.println(wiping ? <span class="k">"YES"</span> : <span class="k">"NO"</span>);
+
+  <span class="k">if</span> (!wiping) {
+    <span class="k">if</span> (wet) {
+      wiper.attach(SERVO_PIN);
+      wiping = <span class="k">true</span>;
+      dryChecks = 0;
+    } <span class="k">else</span> {
+      delay(100);
+      <span class="k">return</span>;
+    }
+  }
+
+  wipeOnce();
+
+  <span class="k">if</span> (readSensor() &gt; WET_THRESHOLD) {
+    dryChecks = 0;
+  } <span class="k">else</span> {
+    dryChecks++;
+    <span class="k">if</span> (dryChecks &gt;= DRY_COUNT) {
+      wiper.write(STOP_VAL);
+      wiper.detach();
+      wiping = <span class="k">false</span>;
+      dryChecks = 0;
+    }
+  }
+}</pre>
+    </div>
+
+    <div class="glass c12 note">
+      <h2>Power connection</h2>
+      <p>Connect the Arduino Uno’s USB port to the power bank with a USB cable. The Arduino then powers the sensor and servo from its 5V and GND pins through the breadboard. The Arduino does not need a computer once the program is uploaded.</p>
+    </div>
+
+    <div class="glass c12">
       <h2>Build the circuit: click two pins to add a wire, click a wire to remove it</h2>
       <div class="simgrid">
-        <svg id="board" viewBox="0 0 820 540" role="group" aria-label="Interactive wiring board">
+        <div class="bw"><svg id="board" viewBox="0 0 820 540" role="group" aria-label="Interactive wiring board">
           <defs><linearGradient id="pcb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d7ab8"/><stop offset="1" stop-color="#135078"/></linearGradient></defs>
           <text class="lbl" x="415" y="18" text-anchor="middle">Water level sensor</text>
           <rect id="sensorBody" x="330" y="26" width="170" height="148" rx="12" fill="#c62828"/>
@@ -198,84 +286,32 @@ button:focus-visible,input:focus-visible,.shot:focus-visible{outline:2px solid v
           <g transform="translate(115 210)"><g id="arm" style="transform:rotate(-180deg)"><line x1="0" y1="0" x2="58" y2="0" stroke="#f5a62b" stroke-width="9" stroke-linecap="round"/><circle r="9" fill="#eee"/></g></g>
           <text class="lbl" x="695" y="40" text-anchor="middle">Mini breadboard</text>
           <rect x="600" y="52" width="190" height="196" rx="12" fill="#efeae0"/>
-          <rect x="676" y="92" width="38" height="132" rx="10" fill="rgba(239,68,68,.15)" stroke="#ef4444" stroke-dasharray="4 4"/>
+          <rect x="614" y="94" width="36" height="124" rx="10" fill="rgba(30,120,190,.10)" stroke="#9aa7b4" stroke-dasharray="4 4"/><rect x="660" y="94" width="36" height="124" rx="10" fill="rgba(30,120,190,.10)" stroke="#9aa7b4" stroke-dasharray="4 4"/><rect x="706" y="94" width="36" height="124" rx="10" fill="rgba(30,120,190,.10)" stroke="#9aa7b4" stroke-dasharray="4 4"/><rect x="752" y="94" width="36" height="124" rx="10" fill="rgba(30,120,190,.10)" stroke="#9aa7b4" stroke-dasharray="4 4"/>
           <g id="bbdots" fill="#bdb6a6"></g>
-          <text class="sm" x="695" y="240" text-anchor="middle">connected column</text>
+          <text class="sm" x="695" y="238" text-anchor="middle">pins in the same column are connected</text>
           <rect x="230" y="370" width="400" height="130" rx="14" fill="url(#pcb)"/>
           <rect x="268" y="362" width="296" height="14" fill="#222"/><rect x="380" y="494" width="120" height="12" fill="#222"/>
           <rect x="330" y="410" width="140" height="26" rx="3" fill="#222"/>
           <text class="big" x="430" y="470" text-anchor="middle">ARDUINO UNO</text>
-          <circle id="led" cx="598" cy="396" r="5" fill="#22c55e"/>
+          <rect x="204" y="420" width="28" height="40" rx="2" fill="#b8b8b8"/>
+          <circle id="led" cx="598" cy="396" r="5" fill="#374151"/>
+          <rect x="20" y="380" width="150" height="110" rx="14" fill="#34465a" stroke="#6b829a" stroke-width="2"/>
+          <rect x="34" y="394" width="90" height="24" rx="5" fill="#1d2a38"/>
+          <g fill="#22c55e"><rect x="40" y="400" width="14" height="12" rx="2"/><rect x="60" y="400" width="14" height="12" rx="2"/><rect x="80" y="400" width="14" height="12" rx="2"/></g><rect x="100" y="400" width="14" height="12" rx="2" fill="#4b5d70"/>
+          <text class="big" x="95" y="462" text-anchor="middle">POWER BANK</text>
+          <text class="lbl" x="95" y="516" text-anchor="middle">Power bank</text>
           <g id="wires"></g><path id="gw" d=""/><g id="pins"></g>
-        </svg>
+        </svg><div id="toast" role="alert"></div></div>
         <aside class="side">
-          <div class="dropwrap"><div class="drop" id="drop" title="Drag onto the sensor">💧</div><p style="font-size:14px">Drag the water drop onto the sensor. Each drop raises the level.</p></div>
+          <div class="dropwrap"><div class="drop" id="drop" title="Drag onto the sensor">💧</div><p style="font-size:14px">Drag a water drop onto the sensor. One drop is enough to start the wiper.</p></div>
           <ul class="checks" id="checks"></ul>
           <div class="status" id="status" aria-live="polite"></div>
           <div class="readout">
-            <div><b id="sA">–</b><small>ADC (A0)</small></div><div><b id="sV">–</b><small>Voltage</small></div>
-            <div><b id="sG">0°</b><small>Servo angle</small></div><div><b id="sP">–</b><small>PWM on D9</small></div>
+            <div><b id="sA">–</b><small>Sensor</small></div><div><b id="sG">STOPPED</b><small>Servo</small></div>
           </div>
-          <div class="btns"><button id="auto">Auto-wire</button><button id="clr">Clear wires</button><button id="add">Add water</button><button id="rem">Remove water</button><button id="dry">Drain all</button><button id="ref">Reference diagram</button></div>
+          <div class="btns"><button id="auto">Auto-wire</button><button id="clr">Clear wires</button><button id="add">Add water drop</button><button id="dry">Dry sensor</button><button id="ref">Reference diagram</button></div>
         </aside>
       </div>
-    </div>
-    <div class="glass c5">
-      <h2>Step-by-step operation</h2>
-      <ol class="steps">
-        <li><span>Click two pins to place a wire. Start with 5V (red) and GND (gray).</span></li>
-        <li><span>Click a wire to remove it if you make a mistake. Purple dashed wires join mismatched pins.</span></li>
-        <li><span>Pass all four checks: sensor power, sensor signal, servo power, servo signal.</span></li>
-        <li><span>Drag the water drop onto the sensor. The Arduino reads A0 and starts the wiper when it detects water.</span></li>
-        <li><span>Watch the servo wipe back and forth. More water means faster wiping. Remove the water and it parks at 0°.</span></li>
-      </ol>
-    </div>
-    <div class="glass c7">
-      <h2>How the components work together</h2>
-      <div class="flow">
-        <div class="node">💧 Water level<br><small>changes resistance</small></div><div class="arrow"></div>
-        <div class="node">Sensor S pin<br><small>analog voltage</small></div><div class="arrow"></div>
-        <div class="node hot">Arduino Uno<br><small>reads A0, checks level</small></div><div class="arrow"></div>
-        <div class="node">D9 PWM<br><small>pulse width</small></div><div class="arrow"></div>
-        <div class="node">Servo wiper<br><small>sweeps 0–180°</small></div>
-      </div>
-    </div>
-
-    <div class="glass c6">
-      <h2>Arduino program</h2>
-<pre><span class="k">#include</span> &lt;Servo.h&gt;
-Servo wiper;
-<span class="k">const int</span> THRESHOLD = 100;   <span class="cm">// water detected above this</span>
-
-<span class="k">void</span> setup() {
-  wiper.attach(9);              <span class="cm">// servo signal on D9</span>
-}
-
-<span class="k">void</span> loop() {
-  <span class="k">int</span> level = analogRead(A0);   <span class="cm">// 0–1023</span>
-  <span class="k">if</span> (level &gt; THRESHOLD) {
-    <span class="k">for</span> (<span class="k">int</span> a = 0; a &lt;= 180; a += 3) { wiper.write(a); delay(10); }
-    <span class="k">for</span> (<span class="k">int</span> a = 180; a &gt;= 0; a -= 3) { wiper.write(a); delay(10); }
-  } <span class="k">else</span> {
-    wiper.write(0);             <span class="cm">// park the wiper</span>
-  }
-}</pre>
-    </div>
-    <div class="glass c6">
-      <h2>Demonstration video</h2>
-      <div class="video" id="vid"><video controls preload="metadata" src="demo.mp4" onerror="this.parentNode.innerHTML='Add your demo video as demo.mp4<br>in the same folder as index.html'"></video></div>
-    </div>
-
-    <div class="glass warn c12">
-      <h2>Safety precautions</h2>
-      <ul style="columns:2;column-gap:36px">
-        <li>Disconnect USB power before changing any wiring.</li>
-        <li>Keep the Arduino and breadboard dry. Only the sensor’s traces go in the water.</li>
-        <li>Check that 5 V and GND are never connected together.</li>
-        <li>Keep fingers and loose wires away from the moving servo arm.</li>
-        <li>Remove the sensor from water and dry it after use, since wet traces corrode.</li>
-        <li>For vehicle fluids (coolant, fuel), test only with plain water in the classroom.</li>
-      </ul>
     </div>
   </div>
 </section>
@@ -308,92 +344,82 @@ Servo wiper;
   });
   if(location.hash==='#slide10')go(1);
 
-  /* simulator */
-  var r=document.getElementById('adc'),touched=false;
-  function upd(){
-    var v=+r.value,ang=v/1023*180;
-    document.getElementById('water').style.height=(v/1023*92+4)+'%';
-    document.getElementById('needle').style.transform='rotate('+(ang-90)+'deg)';
-    document.getElementById('arc').setAttribute('stroke-dasharray',(v/1023*100)+' 100');
-    document.getElementById('vADC').textContent=v;
-    document.getElementById('vV').textContent=(v*5/1023).toFixed(2)+' V';
-    document.getElementById('vA').textContent=Math.round(ang)+'°';
-    document.getElementById('vP').textContent=Math.round(1000+ang/180*1000)+' µs';
-  }
-  r.addEventListener('input',function(){touched=true;upd();});
-  upd();
-  var t=0;
-  var demo=setInterval(function(){
-    if(touched){clearInterval(demo);return;}
-    t+=.03;r.value=Math.round(511.5+420*Math.sin(t));upd();
-  },60);
-
   /* wiring simulator */
   var $=function(i){return document.getElementById(i)},svg=$('board'),NS='http://www.w3.org/2000/svg';
   function E(n,a,par){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(par)par.appendChild(e);return e;}
-  var COL={'5v':'#ef4444',gnd:'#b5b5b5',a0:'#22c1a0',d9:'#f28c28',mix:'#e879f9'};
+  var COL={'5v':'#ef4444',gnd:'#b5b5b5',a0:'#22c1a0',d9:'#f28c28',mix:'#e879f9',usb:'#fbbf24'};
   var defs=[['sS',360,192,'a0',0,1,'S',0,-24],['sP',415,192,'5v',0,1,'+',0,-24],['sM',470,192,'gnd',0,1,'\u2212',0,-24],
   ['vV',190,238,'5v',1,0,'5V',-16,4,'end'],['vG',190,262,'gnd',1,0,'GND',-16,4,'end'],['vS',190,286,'d9',1,0,'SIG',-16,4,'end'],
-  ['b1',695,110,'5v',-1,0],['b2',695,140,'5v',-1,0],['b3',695,170,'5v',-1,0],['b4',695,200,'5v',-1,0],
+  ['PB',170,440,'usb',1,0,'USB',-14,4,'end'],['USB',214,440,'usb',-1,0],
   ['A0',290,370,'a0',0,-1,'A0',0,26],['G1',455,370,'gnd',0,-1,'GND',0,26],['G2',490,370,'gnd',0,-1,'GND',0,26],['V5',525,370,'5v',0,-1,'5V',0,26],['D9',420,500,'d9',0,1,'D9',0,-12]];
+  var BX=[632,678,724,770],BYS=[110,140,170,200];BX.forEach(function(x,ci){BYS.forEach(function(y,ri){defs.push(['c'+(ci+1)+'r'+(ri+1),x,y,'bb',-1,0]);});});
+  var curConf='',tt=null;
+  function toast(msg){var t=$('toast');t.textContent='\u26a0 '+msg;t.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('on')},4500);}
   var P={},PE={},wires=[],level=0,angle=0,pend=null,sp=null,moved=false;
   for(var i=0;i<9;i++)E('rect',{x:352+i*15,y:40,width:8,height:90,rx:2},$('traces'));
-  [630,660,725,755].forEach(function(x){for(var y=110;y<=200;y+=30)E('circle',{cx:x,cy:y,r:4},$('bbdots'));});
   defs.forEach(function(d){
     var g=E('g',{'class':'pin','data-id':d[0]},$('pins'));
     E('circle',{'class':'ring',cx:d[1],cy:d[2],r:16},g);
-    E('circle',{'class':'dot',cx:d[1],cy:d[2],r:8,fill:/^b\d$/.test(d[0])?'#222':COL[d[3]]},g);
+    E('circle',{'class':'dot',cx:d[1],cy:d[2],r:8,fill:d[3]==='bb'?'#222':COL[d[3]]},g);
     if(d[6]){var t=E('text',{'class':'pl',x:d[1]+d[7],y:d[2]+d[8],'text-anchor':d[9]||'middle'},g);t.textContent=d[6];}
     P[d[0]]={x:d[1],y:d[2],k:d[3],dx:d[4],dy:d[5]};PE[d[0]]=g;
   });
-  var CK=[['sPow','Sensor power: + to 5V, \u2212 to GND'],['sSig','Sensor signal: S to A0'],['vPow','Servo power: 5V and GND'],['vSig','Servo signal: SIG to D9']],CL={};
+  var CK=[['pwr','Power: power bank USB to Arduino USB'],['sPow','Sensor power: + to 5V, \u2212 to GND'],['sSig','Sensor signal: S to A0'],['vPow','Servo power: 5V and GND'],['vSig','Servo signal: SIG to D9']],CL={};
   CK.forEach(function(c){var li=document.createElement('li');li.textContent=c[1];$('checks').appendChild(li);CL[c[0]]=li;});
   function path(a,b){var k=50+Math.hypot(a.x-b.x,a.y-b.y)*.22;
     return 'M'+a.x+' '+a.y+' C'+(a.x+a.dx*k)+' '+(a.y+a.dy*k)+' '+(b.x+(b.dx||0)*k)+' '+(b.y+(b.dy||0)*k)+' '+b.x+' '+b.y;}
   var wipeOn=false,wipeLevel=0,raf=null,last=0,phase=0,servoOn=false;
   function setArm(a,smooth){var el=$('arm');el.style.transition=smooth?'':'none';el.style.transform='rotate('+(a-180)+'deg)';}
-  function showAngle(){$('sG').textContent=Math.round(angle)+'\u00b0';$('sP').textContent=servoOn?Math.round(1000+angle/180*1000)+' \u00b5s':'\u2013';}
-  function tick(ts){if(!wipeOn){raf=null;return;}var dt=Math.min(.1,(ts-last)/1000);last=ts;phase+=dt*Math.PI*2/(2.6-wipeLevel*1.6);angle=90-90*Math.cos(phase);setArm(angle,false);showAngle();raf=requestAnimationFrame(tick);}
+  function showAngle(){$('sG').textContent=wipeOn?'WIPING':'STOPPED';}
+  function tick(ts){if(!wipeOn){raf=null;return;}var dt=Math.min(.1,(ts-last)/1000);last=ts;phase+=dt*Math.PI*2/1.2;angle=90-90*Math.cos(phase);setArm(angle,false);showAngle();raf=requestAnimationFrame(tick);}
   function render(){
     var par={};Object.keys(P).forEach(function(k){par[k]=k});
     function f(x){while(par[x]!==x){par[x]=par[par[x]];x=par[x];}return x}
     function u(a,b){par[f(a)]=f(b)}
-    u('b1','b2');u('b2','b3');u('b3','b4');u('G1','G2');
+    for(var ci=1;ci<=4;ci++)for(var ri=1;ri<4;ri++)u('c'+ci+'r'+ri,'c'+ci+'r'+(ri+1));
+    u('G1','G2');
     wires.forEach(function(w){u(w.a,w.b)});
     var v5=f('V5'),gn=f('G1'),short=v5===gn;
+    var LB={'5v':'5V',gnd:'GND',a0:'A0 (sensor signal)',d9:'D9 (servo signal)',usb:'USB power'};
+    var kinds={};Object.keys(P).forEach(function(k){var kk=P[k].k;if(kk==='bb')return;var rt=f(k);(kinds[rt]=kinds[rt]||{})[kk]=1;});
+    var conf=short?'Short circuit: 5V is connected to GND. Remove a wire.':'';
+    if(!conf)Object.keys(kinds).forEach(function(rt){var ks=Object.keys(kinds[rt]);if(ks.length>1&&!conf)conf='Wrong circuit: '+ks.map(function(k){return LB[k]}).join(' and ')+' are connected together. Click the wire to remove it.';});
+    curConf=conf;
     var sigOk=function(pin,arduino){var n=f(pin);return n===f(arduino)&&n!==v5&&n!==gn};
-    var r={sPow:f('sP')===v5&&f('sM')===gn,sSig:sigOk('sS','A0'),vPow:f('vV')===v5&&f('vG')===gn,vSig:sigOk('vS','D9')};
-    if(short)for(var k in r)r[k]=false;
-    var live={};live[v5]=live[gn]=live[f('A0')]=live[f('D9')]=1;
+    var r={pwr:f('PB')===f('USB'),sPow:f('sP')===v5&&f('sM')===gn,sSig:sigOk('sS','A0'),vPow:f('vV')===v5&&f('vG')===gn,vSig:sigOk('vS','D9')};
+    if(conf)for(var k in r)r[k]=false;
+    var live={},pwr=r.pwr;live[v5]=live[gn]=live[f('A0')]=live[f('D9')]=live[f('USB')]=1;
     var W=$('wires');W.innerHTML='';
     wires.forEach(function(w,i){
-      var a=P[w.a],b=P[w.b],same=a.k===b.k,d=path(a,b);
-      var g=E('g',{'class':'wire'+(same?'':' mix')+(w.fresh?' new':'')+(!short&&live[f(w.a)]?' live':'')},W);
-      E('path',{'class':'hit',d:d},g);E('path',{'class':'ln',d:d,stroke:same?COL[a.k]:COL.mix,pathLength:1},g);E('path',{'class':'flow',d:d,pathLength:1},g);
+      var a=P[w.a],b=P[w.b],ks=Object.keys(kinds[f(w.a)]||{}),same=ks.length<=1,bad=ks.length>1,wc=bad?'#ef4444':(ks.length===1?COL[ks[0]]:'#cbd5e1'),d=path(a,b);
+      var g=E('g',{'class':'wire'+(same?'':' mix')+(bad?' bad':'')+(w.fresh?' new':'')+(!conf&&pwr&&live[f(w.a)]?' live':'')},W);
+      E('path',{'class':'hit',d:d},g);E('path',{'class':'ln',d:d,stroke:wc,pathLength:1},g);E('path',{'class':'flow',d:d,pathLength:1},g);
       E('title',{},g).textContent='Click to remove this wire';
       g.addEventListener('click',function(){wires.splice(i,1);render();});
     });
     var used={};wires.forEach(function(w){used[w.a]=used[w.b]=1});
     Object.keys(PE).forEach(function(id){PE[id].classList.toggle('used',!!used[id]);PE[id].classList.toggle('pend',pend===id);});
     CK.forEach(function(c){CL[c[0]].classList.toggle('ok',r[c[0]])});
-    var sOn=r.sPow&&r.sSig,vOn=r.vPow&&r.vSig,adc=sOn?Math.round(level*1023):0;
+    var sOn=r.pwr&&r.sPow&&r.sSig,vOn=r.pwr&&r.vPow&&r.vSig,adc=sOn?Math.round(level*1023):0;
     var wipe=sOn&&vOn&&level>0;servoOn=vOn;if(vOn&&!wipe)angle=0;wipeOn=wipe;wipeLevel=level;
-    $('water').style.transform='scaleY('+level+')';
+    $('water').style.transform='scaleY('+(level?0.45:0)+')';
     if(!wipe)setArm(angle,true);else if(!raf){last=performance.now();phase=0;raf=requestAnimationFrame(tick);}
-    $('led').setAttribute('fill',short?'#ef4444':'#22c55e');
-    $('sA').textContent=sOn?adc:'–';$('sV').textContent=sOn?(adc*5/1023).toFixed(2)+' V':'–';
+    $('led').setAttribute('fill',conf?'#ef4444':(pwr?'#22c55e':'#374151'));
+    $('sA').textContent=sOn?(level?'WET':'DRY'):'–';
     showAngle();
     var st=$('status'),m,c='';
-    if(short){m='Short circuit: 5V is connected to GND. Remove a wire.';c='bad';}
-    else if(sOn&&vOn&&level>0){m='Wiping: more water makes the wiper sweep faster.';c='ok';}
+    if(conf){m=conf;c='bad';}
+    else if(sOn&&vOn&&level>0){m='Water detected: the wiper keeps wiping at the same speed until the sensor is dry.';c='ok';}
     else if(sOn&&vOn){m='Circuit complete. Drag a water drop onto the sensor to start the wiper.';c='ok';}
-    else if(!wires.length){m='Click a pin, then click another pin to place a wire. Start with 5V.';}
+    else if(!wires.length){m='Click a pin, then click another pin to place a wire. Start by connecting the power bank to the Arduino USB.';}
+    else if(!r.pwr){m='No power yet. Connect the power bank USB pin to the Arduino USB port.';}
     else{m='Not working yet. Finish the unchecked items above.';}
     st.textContent=m;st.className='status '+c;
+    if(!conf)$('toast').classList.remove('on');
   }
   function addWire(a,b){
     if(a===b||wires.some(function(w){return(w.a===a&&w.b===b)||(w.a===b&&w.b===a)}))return;
-    var w={a:a,b:b,fresh:true};wires.push(w);setTimeout(function(){w.fresh=false},600);render();
+    var w={a:a,b:b,fresh:true};wires.push(w);setTimeout(function(){w.fresh=false},600);render();if(curConf)toast(curConf);
   }
   function setPend(id){pend=id;if(!id)$('gw').setAttribute('d','');render();}
   function pt(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
@@ -415,22 +441,19 @@ Servo wiper;
     if(ghost){if(over(e))addWater();ghost.remove();ghost=null;$('sensorBody').classList.remove('hot');}
   });
   document.addEventListener('keydown',function(e){if(e.key==='Escape')setPend(null);});
-  /* water drop */
   var ghost=null;
   function over(e){var r=$('sensorBody').getBoundingClientRect();return e.clientX>r.left-14&&e.clientX<r.right+14&&e.clientY>r.top-14&&e.clientY<r.bottom+14;}
   function mv(e){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';$('sensorBody').classList.toggle('hot',over(e));}
-  function addWater(){level=Math.min(1,level+.25);render();}
+  function addWater(){level=1;render();}
   $('drop').addEventListener('pointerdown',function(e){e.preventDefault();ghost=document.createElement('div');ghost.className='ghost';ghost.textContent='💧';document.body.appendChild(ghost);mv(e);});
   window.addEventListener('pointercancel',function(){if(ghost){ghost.remove();ghost=null;}});
   $('add').onclick=addWater;
-  $('rem').onclick=function(){level=Math.max(0,level-.25);render();};
   $('dry').onclick=function(){level=0;render();};
   $('clr').onclick=function(){wires=[];setPend(null);};
   $('auto').onclick=function(){wires=[];setPend(null);
-    [['sS','A0'],['sP','b1'],['V5','b2'],['vV','b3'],['sM','G1'],['vG','G2'],['vS','D9']].forEach(function(p,i){setTimeout(function(){addWire(p[0],p[1])},i*260);});};
+    [['PB','USB'],['sS','A0'],['sP','c1r1'],['V5','c1r2'],['vV','c1r3'],['sM','c2r1'],['G1','c2r2'],['vG','c2r3'],['vS','D9']].forEach(function(p,i){setTimeout(function(){addWire(p[0],p[1])},i*260);});};
   render();
 
-  /* lightbox */
   var lb=$('lb');
   $('ref').onclick=function(){lb.classList.add('on')};
   lb.onclick=function(){lb.classList.remove('on')};
