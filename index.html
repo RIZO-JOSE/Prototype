@@ -10,17 +10,16 @@
 <style>
 :root{--bg:#05121c;--ink:#eaf6fb;--mute:#9db8c4;--aqua:#5eead4;--amber:#f5a62b;--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.18)}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
+html{background:var(--bg);scroll-behavior:smooth}body{min-height:100%;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;overflow-x:hidden}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.55;animation:drift 22s ease-in-out infinite alternate}
 .o1{width:46vmax;height:46vmax;background:#1360c9;top:-14vmax;left:-10vmax}
 .o2{width:38vmax;height:38vmax;background:#0f9c8e;bottom:-14vmax;right:-8vmax;animation-duration:27s}
 .o3{width:22vmax;height:22vmax;background:#c9791a;top:40%;left:55%;opacity:.3;animation-duration:31s}
 @keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.18)}}
 .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 40%,#000,transparent 75%)}
-.deck{position:fixed;inset:0}
-.slide{position:absolute;inset:0;padding:clamp(16px,3vw,40px) clamp(16px,4vw,56px) 84px;overflow-y:auto;opacity:0;visibility:hidden;transform:translateX(60px) scale(.98);transition:opacity .6s,transform .6s,visibility .6s}
-.slide.on{opacity:1;visibility:visible;transform:none}
-.slide.past{transform:translateX(-60px) scale(.98)}
+.deck{position:relative;z-index:1}
+.slide{position:relative;max-width:1240px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(16px,4vw,56px) 40px}
+.slide+.slide{border-top:1px solid var(--edge);margin-top:20px;padding-top:clamp(32px,5vw,64px)}
 h1{font-family:Outfit,sans-serif;font-weight:700;font-size:clamp(28px,4.2vw,54px);letter-spacing:-.02em;line-height:1.05}
 h2{font-family:Outfit,sans-serif;font-weight:600;font-size:clamp(17px,1.7vw,22px);margin-bottom:10px}
 .sub{color:var(--mute);margin-top:8px;max-width:62ch}
@@ -91,12 +90,7 @@ pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;colo
 .fn{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
 .fn div{border-radius:16px;padding:16px;background:rgba(0,0,0,.22);border:1px solid var(--edge);border-left:5px solid var(--c)}
 .fn strong{display:block;font:700 24px Outfit,sans-serif;color:var(--c);margin-bottom:4px}
-nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:8px 14px;z-index:5}
-nav button{font:600 14px 'DM Sans';color:var(--ink);background:rgba(255,255,255,.1);border:1px solid var(--edge);border-radius:99px;padding:8px 16px;cursor:pointer;transition:background .2s}
-nav button:hover{background:rgba(94,234,212,.25)}
 button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
-.dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.3);border:0;padding:0;transition:width .3s,background .3s}
-.dot.on{width:28px;background:var(--aqua)}
 .lb{position:fixed;inset:0;background:rgba(2,8,14,.88);backdrop-filter:blur(10px);display:none;place-items:center;z-index:9;padding:20px;cursor:zoom-out}
 .lb.on{display:grid}.lb img{max-width:100%;max-height:100%;border-radius:12px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -107,7 +101,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-
 
 <main class="deck">
 <!-- ================= SLIDE 9 ================= -->
-<section class="slide on" id="slide9" aria-label="Slide 9">
+<section class="slide" id="slide9" aria-label="Slide 9">
   <header>
     <div><h1>Physics Principles Applied</h1>
     <p class="sub">The four physics ideas that make the water-sensing prototype work.</p></div>
@@ -317,32 +311,11 @@ Servo wiper;
 </section>
 </main>
 
-<nav class="glass" aria-label="Slide navigation">
-  <button id="prev" aria-label="Previous slide">‹ Prev</button>
-  <div class="dots"><button class="dot on" aria-label="Go to slide 9"></button><button class="dot" aria-label="Go to slide 10"></button></div>
-  <button id="next" aria-label="Next slide">Next ›</button>
-</nav>
 <div class="lb" id="lb"><img src="prototype.png" alt="Wiring diagram enlarged"></div>
 
 <script>
 (function(){
-  var slides=[].slice.call(document.querySelectorAll('.slide')),dots=[].slice.call(document.querySelectorAll('.dot')),cur=0;
-  function go(n){
-    cur=Math.max(0,Math.min(slides.length-1,n));
-    slides.forEach(function(s,i){s.classList.toggle('on',i===cur);s.classList.toggle('past',i<cur);});
-    dots.forEach(function(d,i){d.classList.toggle('on',i===cur);});
-    try{history.replaceState(null,'','#slide'+(cur+9));}catch(e){}
-  }
-  document.getElementById('prev').onclick=function(){go(cur-1)};
-  document.getElementById('next').onclick=function(){go(cur+1)};
-  dots.forEach(function(d,i){d.onclick=function(){go(i)}});
-  document.addEventListener('keydown',function(e){
-    if(e.target.tagName==='INPUT')return;
-    if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
-    if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
-    if(e.key==='Escape')lb.classList.remove('on');
-  });
-  if(location.hash==='#slide10')go(1);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('on');});
 
   /* wiring simulator */
   var $=function(i){return document.getElementById(i)},svg=$('board'),NS='http://www.w3.org/2000/svg';
